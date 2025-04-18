@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>モグラたたきゲーム</title>
+    <style>
+        canvas {
+            background-color: #8B4513;
+            display: block;
+            margin: 0 auto;
+        }
+        #startScreen, #gameOverScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #gameOverScreen {
+          display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>モグラたたきゲーム</h1>
+        <p>クリックしてスタート！</p>
+    </div>
+    <div id="gameOverScreen">
+        <h1>ゲームオーバー</h1>
+        <p>スコア: <span id="finalScore">0</span></p>
+        <p>クリックしてリトライ！</p>
+    </div>
+    <canvas id="gameCanvas" width="300" height="300"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const circleRadius = 20;
+        const moguraImage = new Image();
+        moguraImage.src = 'mogura.png';
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScoreDisplay = document.getElementById('finalScore');
+
+        let score = 0;
+        let timeLeft = 30;
+        let gameRunning = false;
+        let moguraX, moguraY;
+        let moguraVisible = false;
+
+        function drawCircle(x, y) {
+            ctx.beginPath();
+            ctx.arc(x, y, circleRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+        }
+
+        function drawMoles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    drawCircle(50 + j * 100, 50 + i * 100);
+                }
+            }
+        }
+
+        function showMogura() {
+            moguraX = Math.floor(Math.random() * 3) * 100 + 50;
+            moguraY = Math.floor(Math.random() * 3) * 100 + 50;
+            ctx.drawImage(moguraImage, moguraX - circleRadius, moguraY - circleRadius, 40, 40);
+            moguraVisible = true;
+        }
+
+        function hideMogura() {
+            moguraVisible = false;
+        }
+
+        function updateScore() {
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText(`スコア: ${score}`, 10, 25);
+        }
+
+        function updateTimer() {
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText(`時間: ${timeLeft}`, 220, 25);
+        }
+
+        function gameLoop() {
+            if (gameRunning) {
+                drawMoles();
+                if (Math.random() < 0.5) {
+                    showMogura();
+                    setTimeout(hideMogura, 1000);
+                }
+                updateScore();
+                updateTimer();
+                timeLeft--;
+                if (timeLeft < 0) {
+                    gameOver();
+                } else {
+                    setTimeout(gameLoop, 1000);
+                }
+            }
+        }
+
+        function startGame() {
+            gameRunning = true;
+            startScreen.style.display = 'none';
+            gameLoop();
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            finalScoreDisplay.textContent = score;
+            gameOverScreen.style.display = 'block';
+        }
+
+        canvas.addEventListener('click', function(event) {
+            if (gameRunning) {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = event.clientX - rect.left;
+                const clickY = event.clientY - rect.top;
+
+                if (moguraVisible &&
+                    clickX >= moguraX - circleRadius && clickX <= moguraX + circleRadius &&
+                    clickY >= moguraY - circleRadius && clickY <= moguraY + circleRadius) {
+                    score++;
+                    const clickSound = new Audio('click.mp3');
+                    clickSound.play();
+                    hideMogura();
+                }
+            }
+        });
+
+        startScreen.addEventListener('click', function() {
+            score = 0;
+            timeLeft = 30;
+            gameOverScreen.style.display = 'none';
+            startGame();
+        });
+
+        gameOverScreen.addEventListener('click', function() {
+            score = 0;
+            timeLeft = 30;
+            gameOverScreen.style.display = 'none';
+            startGame();
+        });
+    </script>
+</body>
+</html>

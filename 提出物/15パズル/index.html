@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="title-screen">
+        <h1>15 Puzzle</h1>
+        <div id="rules">
+            <h2>操作方法とルール</h2>
+            <p>15パズルは、1から15までの番号が書かれた15個のタイルと、1つの空きスペースで構成されています。</p>
+            <h3>操作方法</h3>
+            <ul>
+                <li>空いているスペースに隣接するタイルをクリックすると、そのタイルが空いているスペースに移動します。</li>
+                <li>タイルは上下左右にのみ移動可能です。</li>
+            </ul>
+            <h3>ルール</h3>
+            <ul>
+                <li>タイルを移動させて、番号を順番に並べることが目的です。</li>
+                <li>1から15のタイルを順番に並べ、最後のスペースを右下に配置します。</li>
+                <li>すべてのタイルが正しい順序で並び、最後のスペースが右下にある状態になるとゲームクリアです。</li>
+                <li>ゲーム開始からクリアまでにかかった時間が計測されます。</li>
+                <li>パズルの初期配置はランダムですが、常に解けるように生成されています。</li>
+                <li>移動できないタイルをクリックしても、何も起こりません。</li>
+            </ul>
+        </div>
+        <p>クリックして開始</p>
+    </div>
+    <div id="main" style="display: none;">
+        <div id="timer">経過時間: <span id="time-left">00:00:00</span></div>
+        <div class="panel" id="js-show-panel"></div>
+        <button class="reset" id="js-reset-puzzle">リセット</button>
+        <div id="result-message"></div>
+    </div>
+    <script src="./app.js"></script>
+</body>
+</html>
